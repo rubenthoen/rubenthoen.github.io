@@ -1,3 +1,0 @@
-# Ruben 't Hoen
-
-A lot of empty space...
