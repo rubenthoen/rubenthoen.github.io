@@ -33,11 +33,7 @@ a {
   padding-bottom: 8px;
 }
 
-a:hover {
-  background-color: #2196F3;
-}
-
-
 * {
-  background-color: #2F3437;
+  background-color: #181A1B;
+  color: #FFFFFF;
 }
