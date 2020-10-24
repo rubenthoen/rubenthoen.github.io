@@ -6,6 +6,7 @@
   -ms-transform: translate(-50%, -50%);
   transform: translate(-50%, -50%);
   width: 80%;
+  text-align: center;
 }
 
 h1 {
@@ -14,7 +15,6 @@ h1 {
 }
 
 p {
-  text-align: center;
   font-family: sans-serif;
 
   margin-top: 10px;
