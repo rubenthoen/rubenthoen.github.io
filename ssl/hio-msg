@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Standaardberichten hio-trainen</title>
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --danger: #ef4444;
+      --success: #16a34a;
+      --success-bg: #dcfce7;
+      --border: #e2e8f0;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text: #1e293b;
+      --text-muted: #64748b;
+      --placeholder: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      padding: 2rem 1rem;
+      display: flex;
+      justify-content: center;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 650px;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    /* Main Title & Tab Bar */
+    .header-section {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    h1 {
+      font-size: 1.35rem;
+      font-weight: 700;
+      margin-bottom: 0;
+    }
+
+    .tabs-nav {
+      display: flex;
+      width: 100%;
+      border-bottom: 2px solid var(--border);
+    }
+
+    .tab-btn {
+      flex: 1;
+      text-align: center;
+      background: transparent;
+      border: none;
+      padding: 0.65rem 0.5rem;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+      border-radius: 0;
+      transition: color 0.2s, border-color 0.2s;
+      white-space: nowrap;
+    }
+
+    .tab-btn:hover {
+      color: var(--primary);
+      background-color: transparent;
+    }
+
+    .tab-btn.active {
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+    }
+
+    .tab-panel {
+      display: none;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .tab-panel.active {
+      display: flex;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.5rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+
+    h2 {
+      font-size: 1.15rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+
+    .section-label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 0.5rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+
+    .form-group:last-child {
+      margin-bottom: 0;
+    }
+
+    input[type="text"],
+    input[type="number"] {
+      width: 100%;
+      height: 2.6rem;
+      padding: 0.65rem 0.8rem;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 0.95rem;
+      outline: none;
+      background-color: #fff;
+      color: var(--text);
+      transition: border-color 0.2s;
+    }
+
+    input[type="text"]::placeholder,
+    input[type="number"]::placeholder {
+      color: var(--placeholder);
+    }
+
+    input[type="text"]:focus,
+    input[type="number"]:focus {
+      border-color: var(--primary);
+    }
+
+    /* Multi-button toggle group (Geen / T1 / T4) */
+    .button-group-toggle {
+      display: flex;
+      gap: 0.5rem;
+      width: 100%;
+    }
+
+    .toggle-choice-btn {
+      flex: 1;
+      height: 2.6rem;
+      background-color: #f1f5f9;
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-size: 0.9rem;
+      font-weight: 600;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.15s, border-color 0.15s, color 0.15s;
+    }
+
+    .toggle-choice-btn:hover {
+      background-color: #e2e8f0;
+    }
+
+    .toggle-choice-btn.active {
+      background-color: var(--primary);
+      border-color: var(--primary);
+      color: #ffffff;
+    }
+
+    /* Table / Row styling */
+    .table-container {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .table-row {
+      display: grid;
+      grid-template-columns: 1fr 2fr 2fr 36px;
+      gap: 0.5rem;
+      align-items: center;
+    }
+
+    .input-name  { grid-area: auto; }
+    .input-block { grid-area: auto; }
+    .input-time  { grid-area: auto; }
+    .btn-remove  { grid-area: auto; }
+
+    @media (max-width: 600px) {
+      .table-row {
+        grid-template-columns: 1fr 36px;
+        grid-template-areas:
+          "name btn"
+          "block block"
+          "time time";
+        background: var(--bg);
+        padding: 0.85rem;
+        border-radius: 6px;
+        border: 1px solid var(--border);
+        gap: 0.5rem;
+      }
+
+      .input-name  { grid-area: name; }
+      .btn-remove  { grid-area: btn; }
+      .input-block { grid-area: block; }
+      .input-time  { grid-area: time; }
+    }
+
+    button {
+      padding: 0.55rem 0.9rem;
+      border-radius: 6px;
+      border: none;
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.2s, color 0.2s, border-color 0.2s, opacity 0.2s;
+    }
+
+    .btn-secondary {
+      background-color: #f1f5f9;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover:not(:disabled) {
+      background-color: #e2e8f0;
+    }
+
+    .btn-remove {
+      background-color: transparent;
+      color: var(--danger);
+      border: 1px solid var(--border);
+      height: 2.6rem;
+      width: 36px;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .btn-remove:hover {
+      background-color: #fee2e2;
+    }
+
+    .btn-remove:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+
+    .messages-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .message-card {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      padding: 0.85rem 1rem;
+      border-radius: 6px;
+    }
+
+    .message-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px dashed var(--border);
+      padding-bottom: 0.5rem;
+      gap: 0.75rem;
+    }
+
+    .message-recipient-header {
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--primary);
+    }
+
+    .message-text {
+      font-size: 0.95rem;
+      word-break: break-word;
+      line-height: 1.5;
+      white-space: pre-wrap;
+    }
+
+    /* Copy Button Wrapper & Tooltip Popup */
+    .copy-btn-wrapper {
+      position: relative;
+      display: inline-flex;
+    }
+
+    .btn-copy {
+      background-color: white;
+      border: 1px solid var(--border);
+      padding: 0.35rem 0.75rem;
+      font-size: 0.8rem;
+      flex-shrink: 0;
+    }
+
+    .btn-copy:hover:not(:disabled) {
+      background-color: #f1f5f9;
+    }
+
+    .btn-copy.copied {
+      background-color: var(--success-bg);
+      border-color: var(--success);
+      color: var(--success);
+      font-weight: 600;
+    }
+
+    .btn-copy:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
+    .copy-btn-wrapper .tooltip-popup {
+      visibility: hidden;
+      opacity: 0;
+      background-color: #1e293b;
+      color: #ffffff;
+      text-align: center;
+      border-radius: 5px;
+      padding: 5px 9px;
+      font-size: 0.75rem;
+      position: absolute;
+      z-index: 60;
+      bottom: calc(100% + 6px);
+      right: 0;
+      white-space: nowrap;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      transition: opacity 0.15s ease-in-out, visibility 0.15s ease-in-out;
+      pointer-events: none;
+    }
+
+    .copy-btn-wrapper .tooltip-popup::after {
+      content: "";
+      position: absolute;
+      top: 100%;
+      right: 18px;
+      border-width: 4px;
+      border-style: solid;
+      border-color: #1e293b transparent transparent transparent;
+    }
+
+    .copy-btn-wrapper.disabled:hover .tooltip-popup,
+    .copy-btn-wrapper.disabled.show-tooltip .tooltip-popup {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    footer {
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      padding: 0.5rem 0 1rem;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <!-- Header & Tabs Bar -->
+    <div class="header-section">
+      <h1>Standaardberichten hio-trainen</h1>
+      <div class="tabs-nav">
+        <button class="tab-btn active" data-tab="tab-1">Voor cursus</button>
+        <button class="tab-btn" data-tab="tab-2">Voor training</button>
+      </div>
+    </div>
+
+    <!-- TAB 1: VOOR CURSUS -->
+    <div id="tab-1" class="tab-panel active">
+      <div class="card">
+        <h2>Input</h2>
+
+        <!-- Periode -->
+        <div class="form-group">
+          <label for="period-input" class="section-label">Periode</label>
+          <input type="number" id="period-input" min="1" placeholder="Nabesprekingen in periode..." />
+        </div>
+
+        <!-- Tabel met nabesprekingen -->
+        <div class="form-group">
+          <label class="section-label">Nabesprekingen</label>
+
+          <div id="table-rows-container" class="table-container">
+            <!-- Dynamisch toegevoegde rijen -->
+          </div>
+
+          <button id="add-row-btn" class="btn-secondary" type="button">+ Nabespreking toevoegen</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Output</h2>
+        <div id="messages-container" class="messages-list">
+          <!-- Dynamisch gegenereerde berichten -->
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: VOOR TRAINING -->
+    <div id="tab-2" class="tab-panel">
+      <div class="card">
+        <h2>Input</h2>
+
+        <!-- 1. Naam -->
+        <div class="form-group">
+          <label for="t2-name-input" class="section-label">Naam hio</label>
+          <input type="text" id="t2-name-input" placeholder="Hio heet..." />
+        </div>
+
+        <!-- 2. Dag -->
+        <div class="form-group">
+          <label for="t2-day-input" class="section-label">Dag</label>
+          <input type="text" id="t2-day-input" placeholder="Training is op..." />
+        </div>
+
+        <!-- 3. Blok -->
+        <div class="form-group">
+          <label for="t2-block-input" class="section-label">Blok</label>
+          <input type="text" id="t2-block-input" placeholder="We trainen..." />
+        </div>
+
+        <!-- 4. Bijzondere training toggle -->
+        <div class="form-group">
+          <label class="section-label">Bijzondere training?</label>
+          <div class="button-group-toggle" id="t2-training-type-toggle">
+            <button type="button" class="toggle-choice-btn active" data-type="Geen">Nee</button>
+            <button type="button" class="toggle-choice-btn" data-type="T1">T1</button>
+            <button type="button" class="toggle-choice-btn" data-type="T4">T4</button>
+          </div>
+        </div>
+
+        <!-- 5. Voorstel (alleen bij T1) -->
+        <div class="form-group" id="t2-proposal-group" style="display: none;">
+          <label for="t2-proposal-input" class="section-label">Voorstel</label>
+          <input type="text" id="t2-proposal-input" placeholder="Ik ben beschikbaar op..." />
+        </div>
+
+        <!-- 6. Alternatief (alleen bij T1) -->
+        <div class="form-group" id="t2-alt-group" style="display: none;">
+          <label for="t2-alt-input" class="section-label">Alternatief</label>
+          <input type="text" id="t2-alt-input" placeholder="Ik ben beschikbaar op..." />
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Output</h2>
+        <div id="t2-messages-container" class="messages-list">
+          <!-- Dynamisch gegenereerd bericht voor training -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+      Gemaakt door Ruben met behulp van Gemini
+    </footer>
+  </div>
+
+  <script>
+    // --- TAB SWITCHING LOGIC ---
+    const tabButtons = document.querySelectorAll('.tab-btn');
+    const tabPanels = document.querySelectorAll('.tab-panel');
+
+    tabButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const targetId = btn.getAttribute('data-tab');
+
+        tabButtons.forEach(b => b.classList.remove('active'));
+        tabPanels.forEach(p => p.classList.remove('active'));
+
+        btn.classList.add('active');
+        document.getElementById(targetId).classList.add('active');
+      });
+    });
+
+    // --- SHARED COMPONENT: MESSAGE CARD WITH TOOLTIP ---
+    function createMessageCard(recipientTitle, text, allValid) {
+      const item = document.createElement('div');
+      item.className = 'message-card';
+
+      const headerRow = document.createElement('div');
+      headerRow.className = 'message-header-row';
+
+      const title = document.createElement('div');
+      title.className = 'message-recipient-header';
+      title.textContent = recipientTitle;
+
+      const copyWrapper = document.createElement('div');
+      copyWrapper.className = 'copy-btn-wrapper' + (!allValid ? ' disabled' : '');
+
+      const tooltip = document.createElement('span');
+      tooltip.className = 'tooltip-popup';
+      tooltip.textContent = 'Vul alle velden in om te kunnen kopiëren';
+
+      const copyBtn = document.createElement('button');
+      copyBtn.className = 'btn-copy';
+      copyBtn.textContent = 'Kopieer';
+      copyBtn.disabled = !allValid;
+      copyBtn.onclick = (e) => {
+        e.stopPropagation();
+        navigator.clipboard.writeText(text);
+        copyBtn.textContent = 'Gekopieerd!';
+        copyBtn.classList.add('copied');
+        setTimeout(() => {
+          copyBtn.textContent = 'Kopieer';
+          copyBtn.classList.remove('copied');
+        }, 1500);
+      };
+
+      copyWrapper.addEventListener('click', () => {
+        if (!allValid) {
+          copyWrapper.classList.add('show-tooltip');
+          setTimeout(() => {
+            copyWrapper.classList.remove('show-tooltip');
+          }, 2000);
+        }
+      });
+
+      copyWrapper.appendChild(copyBtn);
+      copyWrapper.appendChild(tooltip);
+
+      headerRow.appendChild(title);
+      headerRow.appendChild(copyWrapper);
+
+      const span = document.createElement('span');
+      span.className = 'message-text';
+      span.textContent = text;
+
+      item.appendChild(headerRow);
+      item.appendChild(span);
+      return item;
+    }
+
+    // ==========================================
+    // --- TAB 1 SCRIPT LOGIC (VOOR CURSUS)   ---
+    // ==========================================
+    const periodInput = document.getElementById('period-input');
+    const tableRowsContainer = document.getElementById('table-rows-container');
+    const addRowBtn = document.getElementById('add-row-btn');
+    const messagesContainer = document.getElementById('messages-container');
+
+    function updateRemoveButtons() {
+      const rows = tableRowsContainer.querySelectorAll('.table-row');
+      rows.forEach(row => {
+        const removeBtn = row.querySelector('.btn-remove');
+        removeBtn.disabled = rows.length === 1;
+      });
+    }
+
+    function generateMessage(name, period, block, time) {
+      const trimmedName = name.trim() || '...';
+      const trimmedPeriod = period.trim() || '...';
+      const trimmedBlock = block.trim() || '...';
+      const trimmedTime = time.trim() || '...';
+
+      return `Hoi ${trimmedName}, leuk dat je er periode ${trimmedPeriod} ook weer bij bent!\n\n` +
+        `Ik kom ${trimmedBlock} meekijken, m'n plan is om na te bespreken om ${trimmedTime}. Als je nog vragen hebt over de cursus of je voorbereiding, laat het vooral weten :)`;
+    }
+
+    function updateMessages() {
+      messagesContainer.innerHTML = '';
+
+      const rows = Array.from(tableRowsContainer.querySelectorAll('.table-row'));
+      const generalPeriodFilled = periodInput.value.trim() !== '';
+      const currentPeriod = periodInput.value;
+
+      rows.forEach(row => {
+        const nameVal = row.querySelector('.input-name').value;
+        const blockVal = row.querySelector('.input-block').value;
+        const timeVal = row.querySelector('.input-time').value;
+
+        const rowValid = generalPeriodFilled &&
+                         nameVal.trim() !== '' &&
+                         blockVal.trim() !== '' &&
+                         timeVal.trim() !== '';
+
+        const recipientTitle = nameVal.trim() !== '' ? `Naar hio: ${nameVal.trim()}` : 'Naar hio: ...';
+        const msg = generateMessage(nameVal, currentPeriod, blockVal, timeVal);
+
+        messagesContainer.appendChild(createMessageCard(recipientTitle, msg, rowValid));
+      });
+    }
+
+    function addTableRow(focusOnName = false) {
+      const row = document.createElement('div');
+      row.className = 'table-row';
+
+      const nameInput = document.createElement('input');
+      nameInput.type = 'text';
+      nameInput.className = 'input-name';
+      nameInput.placeholder = 'Naam...';
+      nameInput.addEventListener('input', updateMessages);
+
+      const blockInput = document.createElement('input');
+      blockInput.type = 'text';
+      blockInput.className = 'input-block';
+      blockInput.placeholder = 'Blok...';
+      blockInput.addEventListener('input', updateMessages);
+
+      const timeInputCol = document.createElement('input');
+      timeInputCol.type = 'text';
+      timeInputCol.className = 'input-time';
+      timeInputCol.placeholder = 'Tijd...';
+
+      // Automatische tijdsformattering: 1230 -> 12:30
+      timeInputCol.addEventListener('input', () => {
+        let val = timeInputCol.value.trim();
+        if (/^\d{4}$/.test(val)) {
+          timeInputCol.value = val.slice(0, 2) + ':' + val.slice(2);
+        }
+        updateMessages();
+      });
+
+      timeInputCol.addEventListener('blur', () => {
+        let val = timeInputCol.value.trim();
+        if (/^\d{3}$/.test(val)) {           timeInputCol.value = '0' + val[0] + ':' + val.slice(1);           updateMessages();         } else if (/^\d{4}$/.test(val)) {
+          timeInputCol.value = val.slice(0, 2) + ':' + val.slice(2);
+          updateMessages();
+        }
+      });
+
+      // Automatisch nieuwe rij toevoegen bij tabben uit de laatste kolom van de laatste rij
+      timeInputCol.addEventListener('keydown', (e) => {
+        if (e.key === 'Tab' && !e.shiftKey) {
+          const rows = tableRowsContainer.querySelectorAll('.table-row');
+          if (row === rows[rows.length - 1]) {
+            e.preventDefault();
+            addTableRow(true);
+          }
+        }
+      });
+
+      const removeBtn = document.createElement('button');
+      removeBtn.type = 'button';
+      removeBtn.className = 'btn-remove';
+      removeBtn.textContent = '✕';
+      removeBtn.title = 'Verwijder nabespreking';
+      removeBtn.onclick = () => {
+        row.remove();
+        updateRemoveButtons();
+        updateMessages();
+      };
+
+      row.appendChild(nameInput);
+      row.appendChild(blockInput);
+      row.appendChild(timeInputCol);
+      row.appendChild(removeBtn);
+
+      tableRowsContainer.appendChild(row);
+      updateRemoveButtons();
+      updateMessages();
+
+      if (focusOnName) {
+        nameInput.focus();
+      }
+    }
+
+    periodInput.addEventListener('input', updateMessages);
+    addRowBtn.addEventListener('click', () => addTableRow(true));
+
+    // Initialiseer met 1 rij
+    addTableRow();
+
+    // ==========================================
+    // --- TAB 2 SCRIPT LOGIC (VOOR TRAINING) ---
+    // ==========================================
+    const t2NameInput = document.getElementById('t2-name-input');
+    const t2DayInput = document.getElementById('t2-day-input');
+    const t2BlockInput = document.getElementById('t2-block-input');
+    const t2ProposalGroup = document.getElementById('t2-proposal-group');
+    const t2ProposalInput = document.getElementById('t2-proposal-input');
+    const t2AltGroup = document.getElementById('t2-alt-group');
+    const t2AltInput = document.getElementById('t2-alt-input');
+    const t2MessagesContainer = document.getElementById('t2-messages-container');
+    const t2TypeButtons = document.querySelectorAll('#t2-training-type-toggle .toggle-choice-btn');
+
+    let currentTrainingType = 'Geen';
+
+    t2TypeButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        t2TypeButtons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentTrainingType = btn.getAttribute('data-type');
+
+        if (currentTrainingType === 'T1') {
+          t2ProposalGroup.style.display = 'block';
+          t2AltGroup.style.display = 'block';
+        } else {
+          t2ProposalGroup.style.display = 'none';
+          t2AltGroup.style.display = 'none';
+        }
+
+        updateTab2Messages();
+      });
+    });
+
+    function isTab2Valid() {
+      const nameOk = t2NameInput.value.trim() !== '';
+      const dayOk = t2DayInput.value.trim() !== '';
+      const blockOk = t2BlockInput.value.trim() !== '';
+
+      if (currentTrainingType === 'T1') {
+        const propOk = t2ProposalInput.value.trim() !== '';
+        const altOk = t2AltInput.value.trim() !== '';
+        return nameOk && dayOk && blockOk && propOk && altOk;
+      }
+
+      return nameOk && dayOk && blockOk;
+    }
+
+    function generateTab2Message(name, day, block, type, proposal, alt) {
+      const n = name.trim() || '...';
+      const d = day.trim() || '...';
+      const b = block.trim() || '...';
+      const p = proposal.trim() || '...';
+      const a = alt.trim() || '...';
+
+      if (type === 'T1') {
+        return `Hoi ${n}, ${d} staat je eerste hio-training (${b}) gepland! zin in? zenuwen? Ik heb in ieder geval heel veel zin om samen aan de slag te gaan :)\n\n` +
+               `Zullen we voor de training alvast een kwartiertje bellen, om al je vragen te beantwoorden en alle praktische dingen even langs te gaan? Ik ben beschikbaar op ${p} of ${a}, wat komt voor jou handig uit?\n\n` +
+               `Verder staat op het opleidingspaneel voor deze training een intakeopdracht, lukt het om die de dag voor de training op te sturen?`;
+      }
+
+      let msg = `Hoi ${n}, ${d} gaan we ${b} trainen; heb je nog vragen over je voorbereiding, of iets anders waarbij ik je kan helpen?`;
+
+      if (type === 'T4') {
+        msg += `\n\nVoor deze trainig staat op het opleidingspaneel een invulopdracht over je eerste cursus, lukt het om die de dag voor de training op te sturen?`;
+      }
+
+      return msg;
+    }
+
+    function updateTab2Messages() {
+      t2MessagesContainer.innerHTML = '';
+
+      const name = t2NameInput.value;
+      const day = t2DayInput.value;
+      const block = t2BlockInput.value;
+      const proposal = t2ProposalInput.value;
+      const alt = t2AltInput.value;
+
+      const valid = isTab2Valid();
+      const msg = generateTab2Message(name, day, block, currentTrainingType, proposal, alt);
+      const recipientTitle = name.trim() !== '' ? `Naar hio: ${name.trim()}` : 'Naar hio: ...';
+
+      t2MessagesContainer.appendChild(createMessageCard(recipientTitle, msg, valid));
+    }
+
+    t2NameInput.addEventListener('input', updateTab2Messages);
+    t2DayInput.addEventListener('input', updateTab2Messages);
+    t2BlockInput.addEventListener('input', updateTab2Messages);
+    t2ProposalInput.addEventListener('input', updateTab2Messages);
+    t2AltInput.addEventListener('input', updateTab2Messages);
+
+    // Initialiseer tab 2 output
+    updateTab2Messages();
+  </script>
+</body>
+</html>
