@@ -402,6 +402,12 @@
           <input type="number" id="period-input" min="1" placeholder="Nabesprekingen in periode..." />
         </div>
 
+        <!-- Lokaal -->
+        <div class="form-group">
+          <label for="room-input" class="section-label">Lokaal</label>
+          <input type="text" id="room-input" placeholder="Ik ben ingedeeld in lokaal..." />
+        </div>
+
         <!-- Tabel met nabesprekingen -->
         <div class="form-group">
           <label class="section-label">Nabesprekingen</label>
@@ -561,6 +567,7 @@
     // --- TAB 1 SCRIPT LOGIC (VOOR CURSUS)   ---
     // ==========================================
     const periodInput = document.getElementById('period-input');
+    const roomInput = document.getElementById('room-input');
     const tableRowsContainer = document.getElementById('table-rows-container');
     const addRowBtn = document.getElementById('add-row-btn');
     const messagesContainer = document.getElementById('messages-container');
@@ -573,14 +580,15 @@
       });
     }
 
-    function generateMessage(name, period, block, time) {
+    function generateMessage(name, period, block, time, room) {
       const trimmedName = name.trim() || '...';
       const trimmedPeriod = period.trim() || '...';
       const trimmedBlock = block.trim() || '...';
       const trimmedTime = time.trim() || '...';
+      const trimmedRoom = room.trim() || '...';
 
       return `Hoi ${trimmedName}, leuk dat je er periode ${trimmedPeriod} ook weer bij bent!\n\n` +
-        `Ik kom ${trimmedBlock} meekijken, m'n plan is om na te bespreken om ${trimmedTime}. Als je nog vragen hebt over de cursus of je voorbereiding, laat het vooral weten :)`;
+        `Ik kom ${trimmedBlock} meekijken, m'n plan is om na te bespreken om ${trimmedTime} (in ${trimmedRoom}). Als je nog vragen hebt over de cursus of je voorbereiding, laat het vooral weten :)`;
     }
 
     function updateMessages() {
@@ -588,7 +596,9 @@
 
       const rows = Array.from(tableRowsContainer.querySelectorAll('.table-row'));
       const generalPeriodFilled = periodInput.value.trim() !== '';
+      const generalRoomFilled = roomInput.value.trim() !== '';
       const currentPeriod = periodInput.value;
+      const currentRoom = roomInput.value;
 
       rows.forEach(row => {
         const nameVal = row.querySelector('.input-name').value;
@@ -596,12 +606,13 @@
         const timeVal = row.querySelector('.input-time').value;
 
         const rowValid = generalPeriodFilled &&
+                         generalRoomFilled &&
                          nameVal.trim() !== '' &&
                          blockVal.trim() !== '' &&
                          timeVal.trim() !== '';
 
         const recipientTitle = nameVal.trim() !== '' ? `Naar hio: ${nameVal.trim()}` : 'Naar hio: ...';
-        const msg = generateMessage(nameVal, currentPeriod, blockVal, timeVal);
+        const msg = generateMessage(nameVal, currentPeriod, blockVal, timeVal, currentRoom);
 
         messagesContainer.appendChild(createMessageCard(recipientTitle, msg, rowValid));
       });
@@ -682,6 +693,7 @@
     }
 
     periodInput.addEventListener('input', updateMessages);
+    roomInput.addEventListener('input', updateMessages);
     addRowBtn.addEventListener('click', () => addTableRow(true));
 
     // Initialiseer met 1 rij
